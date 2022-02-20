@@ -11,9 +11,11 @@ class SegmentInventory {
 
 	public $width;
 	public $height;
+	public $color;
 
 	public Railing $railing;
 	public Segment $segment;
+
 	/**
 	 * @var Part[]
 	 */
@@ -45,6 +47,8 @@ class SegmentInventory {
 		$this->parts = $parts;
 		$this->height = (int)preg_replace('/[^0-9\\.]/u', '', $segment['height']);
 		$this->width = (float) $segment->width;
+		$this->color = $railing->color;
+
 
 		foreach ($parts as $part) {
 			$this->inventoryBySku[$part->sku] = 0;
@@ -154,7 +158,7 @@ class SegmentInventory {
 		if (!$topRailLength) $topRailLength = 10;
 
 		$size = $this->segment->toprail === 'Aluminum 3"' ? 13 : 12;
-		$color = $this->mapColor($this->railing->color);
+		$color = $this->mapColor($this->color);
 
 		$numTopRailSticks = ceil($this->width / $topRailLength);
 
@@ -163,7 +167,7 @@ class SegmentInventory {
 		$numPosts = $this->totalPosts();
 
 		$this->addInventory(
-			($this->railing->color === 'White') ? 'TPRL-SCRW-ST12-ZINC' : 'TPRL-SCRW-ST12',
+			($this->color === 'White') ? 'TPRL-SCRW-ST12-ZINC' : 'TPRL-SCRW-ST12',
 			$numPosts * 4
 		);
 
@@ -173,7 +177,7 @@ class SegmentInventory {
 	protected function calculateToprailBrackets() {
 		$numPosts = $this->totalPosts();
 
-		$color = $this->mapColor($this->railing->color);
+		$color = $this->mapColor($this->color);
 		if ($color === 'BRZ') $color = 'BLK';
 
 		$standardBrackets = $numPosts;
@@ -196,7 +200,7 @@ class SegmentInventory {
 
 		$size = $this->segment->toprail === 'Aluminum 3"' ? 13 : 12;
 
-		$color = $this->mapColor($this->railing->color);
+		$color = $this->mapColor($this->color);
 		if ($color === 'BRZ') $color = 'BLK';
 
 		$sku = "END-CAP-${size}-${color}";
@@ -215,9 +219,9 @@ class SegmentInventory {
 		if ($segment->surface === 'Concrete') {
 			$sku = 'CNCRT-FSTNR-3';
 		} else if ($segment->mount === 'Fascia' || ($this->height === 42 && $segment->mount === 'Base')) {
-			$sku = $this->railing->color === 'White' ? 'ZNC-LAG-FSTNR-5' : 'HDLK-FSTNR-5';
+			$sku = $this->color === 'White' ? 'ZNC-LAG-FSTNR-5' : 'HDLK-FSTNR-5';
 		} else {
-			$sku = $this->railing->color === 'White' ? 'ZNC-LAG-FSTNR-3' : 'HDLK-FSTNR-278';
+			$sku = $this->color === 'White' ? 'ZNC-LAG-FSTNR-3' : 'HDLK-FSTNR-278';
 		}
 
 		$numBoltsPerSegment = 4;
@@ -238,7 +242,7 @@ class SegmentInventory {
 
 	protected function calculateBracketScrews() {
 		$sku = 'SCRW-BRCKT';
-		if ($this->railing->color === 'White') {
+		if ($this->color === 'White') {
 			$sku = 'BRCKT-SCRW-ZNC';
 		}
 
@@ -248,7 +252,7 @@ class SegmentInventory {
 	protected function calculateSleeves($numTopRailSticks) {
 		$numSleeveScrews = 0;
 
-		$color = $this->mapColor($this->railing->color);
+		$color = $this->mapColor($this->color);
 		if ($this->segment->top_rail !== 'No Toprail') {
 			if ($numTopRailSticks > 1) {
 				$numStraightSleeves = $numTopRailSticks - 1;
@@ -285,7 +289,7 @@ class SegmentInventory {
 		}
 
 		$this->addInventory(
-			$this->railing->color === 'White' ? 'SLV-SCRW-ST8-ZNC' : 'SLV-SCRW-ST8',
+			$this->color === 'White' ? 'SLV-SCRW-ST8-ZNC' : 'SLV-SCRW-ST8',
 			$numSleeveScrews
 		);
 	}
