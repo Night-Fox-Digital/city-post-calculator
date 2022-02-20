@@ -1,0 +1,15 @@
+{
+    "name": "city-post/calculator",
+    "description": "City Post Deal Calculator",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "CityPost\\Calculator\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^7.4|^8.0",
+        "laravel/framework": ">=7"
+    }
+}
