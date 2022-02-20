@@ -67,7 +67,7 @@ class QuoteCalculator {
 			}
 		}
 
-		$this->includeDiscount = $type !== 'direct';
+		$this->includeDiscount = $type !== 'retail';
 		$this->type = $type;
 
 		$parts = Part::get();
@@ -122,7 +122,7 @@ class QuoteCalculator {
 				$linealFeet = (float) $segment->width;
 				$this->linealFeetPerRailing[$railing->id] += $linealFeet;
 
-				$segmentPrice = $this->getSegmentPrice($segment, $railing->steel, $reseller && $this->type !== 'wholesale');
+				$segmentPrice = $this->getSegmentPrice($segment, $railing->steel, $reseller);
 
 				$this->subtotal += $linealFeet * $segmentPrice;
 			}
@@ -138,12 +138,12 @@ class QuoteCalculator {
 
 		$this->subtotal += $this->customItemSubtotal;
 
-		if (isset($deal->customer[0]) && is_numeric($deal->customer[0]->discount_percentage)) {
+		if ($this->includeDiscount && isset($deal->customer[0]) && is_numeric($deal->customer[0]->discount_percentage)) {
 			$percentageDiscount = $deal->customer[0]->discount_percentage / 100;
 			$this->discount = $this->subtotal * $percentageDiscount;
 		}
 
-		if ($this->includeDiscount && !empty($deal->special_discount)) {
+		if (!empty($deal->special_discount)) {
 			$specialDiscount = (float) $deal->special_discount;
 			$this->discount += $specialDiscount;
 		}
@@ -155,7 +155,7 @@ class QuoteCalculator {
 		$this->total = $this->subtotal - $this->discount + $this->tools + $this->taxes + $this->shipping;
 	}
 
-	protected function getSegmentPrice($segment, $material, $useRetailPrice) {
+	protected function getSegmentPrice($segment, $material, $isReseller) {
 		$price = $this->prices->where('type', $segment->type)->where('height', $segment->height)->where('material', $material)->first();
 		if (!$price) {
 			$this->errors[] = [
@@ -169,12 +169,18 @@ class QuoteCalculator {
 			]);
 		}
 
-		$cost = $useRetailPrice ? $price->retail_cost : $price->cost;
+		$cost = $price->retail_cost;
+		if ($this->type === 'direct' || !$isReseller) {
+			$cost = $price->cost;
+		}
 
 		$cost = (float) $cost;
 
 		if ($segment->top_rail === 'No Toprail') {
-			$cost -= $useRetailPrice ? 2.50 : 5;
+			// Retail is $5 off, Wholesale is $2.50 off, Direct is $5 off
+			$discount = 5;
+			if ($this->type === 'wholesale') $discount = 2.5;
+			$cost -= $discount;
 		}
 
 		return $cost;
