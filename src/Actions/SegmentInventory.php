@@ -310,7 +310,7 @@ class SegmentInventory {
 			'Bronze' => 'BRZ',
 		];
 
-		return $colorMapper[$color] ?: 'BLK';
+		return $colorMapper[$color] ?? 'BLK';
 	}
 
 	protected function getPostPart($purpose = 'Horizontal', $corner = 'Standard') {
