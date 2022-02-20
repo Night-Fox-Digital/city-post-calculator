@@ -56,8 +56,8 @@ class QuoteCalculator {
 	 * @param $type
 	 */
 
-	public function __construct(Deal $deal, $type = null) {
-		$this->prices = Price::get();
+	public function __construct(Deal $deal, $type = null, $prices = null) {
+		$this->prices = $prices ?: Price::get();
 
 		if (!$type) {
 			if (isset($deal->customer[0])) {
