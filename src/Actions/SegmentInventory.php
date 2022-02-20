@@ -175,6 +175,8 @@ class SegmentInventory {
 	}
 
 	protected function calculateToprailBrackets() {
+		if ($this->segment->top_rail === 'No Toprail') return;
+
 		$numPosts = $this->totalPosts();
 
 		$color = $this->mapColor($this->color);
