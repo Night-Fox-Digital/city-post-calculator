@@ -157,7 +157,7 @@ class SegmentInventory {
 		$topRailLength = (int)$this->segment->toprail_length;
 		if (!$topRailLength) $topRailLength = 10;
 
-		$size = $this->segment->toprail === 'Aluminum 3"' ? 13 : 12;
+		$size = $this->segment->top_rail === 'Aluminum 3"' ? 13 : 12;
 		$color = $this->mapColor($this->color);
 
 		$numTopRailSticks = ceil($this->width / $topRailLength);
@@ -200,7 +200,7 @@ class SegmentInventory {
 	protected function calculateEndCaps() {
 		if ($this->segment->end_sleeve_type === 'Horizontal to Stair') return;
 
-		$size = $this->segment->toprail === 'Aluminum 3"' ? 13 : 12;
+		$size = $this->segment->top_rail === 'Aluminum 3"' ? 13 : 12;
 
 		$color = $this->mapColor($this->color);
 		if ($color === 'BRZ') $color = 'BLK';
@@ -275,7 +275,7 @@ class SegmentInventory {
 					$sku = "SLV-HS${direction}-${color}";
 				}
 				else {
-					$size = $this->segment->toprail === 'Aluminum 3"' ? 13 : 12;
+					$size = $this->segment->top_rail === 'Aluminum 3"' ? 13 : 12;
 					$sku = "SLV-90-DEG-HS${size}-${color}";
 				}
 			}
