@@ -25,6 +25,11 @@ class QuoteCalculator {
 	 */
 	public $partsBySku;
 
+	/**
+	 * @var Record<sku_id, Part>
+	 */
+	public $partsByNewSku;
+
 	public $subtotal = 0;
 	public $customItemSubtotal = 0;
 	public $total = 0;
@@ -72,6 +77,7 @@ class QuoteCalculator {
 
 		$parts = Part::get();
 		$this->partsBySku = $parts->keyBy('sku');
+		$this->partsByNewSku = $parts->keyBy('sku_id');
 		foreach ($parts as $part) {
 			$this->inventoryBySku[$part->sku] = 0;
 		}
