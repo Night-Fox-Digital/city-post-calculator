@@ -100,6 +100,17 @@ class QuoteCalculator {
 		return $total;
 	}
 
+	public function getMappedInventory() {
+		$map = [];
+		$inventory = $this->getInventory();
+		foreach ($inventory as $sku => $count) {
+			$part = $this->partsBySku[$sku];
+			$map[$part->sku_id] = $count;
+		}
+
+		return $map;
+	}
+
 	public function getInventory() {
 		return collect($this->inventoryBySku)->filter(function($count) {
 			return $count > 0;
