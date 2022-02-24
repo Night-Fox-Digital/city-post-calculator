@@ -270,9 +270,13 @@ class SegmentInventory {
 			// Add Finish Sleeve
 			$sku = null;
 			if ($this->segment->end_sleeve_type === 'Horizontal to Stair') {
-				if ($this->segment->turn_degrees === 'None' && !empty($this->segment->sleeve_upper_lower)) {
-					$direction = $this->segment->sleeve_upper_lower === 'Upstairs' ? 'U' : 'L';
-					$sku = "SLV-HS${direction}-${color}";
+				if ($this->segment->turn_direction === 'None') {
+					if (!empty($this->segment->sleeve_upper_lower)) {
+						$direction = $this->segment->sleeve_upper_lower === 'Upstairs' ? 'U' : 'L';
+						$sku = "SLV-HS${direction}-${color}";
+					} else {
+						$sku = "SLV-STRT-${color}";
+					}
 				}
 				else {
 					$size = $this->is3InchToprail() ? 13 : 12;
