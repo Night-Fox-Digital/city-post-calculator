@@ -174,9 +174,10 @@ class SegmentInventory {
 		$this->calculateSleeves($numTopRailSticks);
 	}
 
+	/**
+	 * Brackets should always been included even if there is no toprail
+	 */
 	protected function calculateToprailBrackets() {
-		if ($this->segment->top_rail === 'No Toprail') return;
-
 		$numPosts = $this->totalPosts();
 
 		$color = $this->mapColor($this->color);
@@ -242,6 +243,9 @@ class SegmentInventory {
 		}
 	}
 
+	/**
+	 * Bracket screws should always be included even if there is no toprail
+	 */
 	protected function calculateBracketScrews() {
 		$sku = 'SCRW-BRCKT';
 		if ($this->color === 'White') {
