@@ -33,6 +33,8 @@ class QuoteCalculator {
 	public $taxes = 0;
 	public $shipping = 0;
 	public bool $includeDiscount;
+	public $percentageDiscount;
+	public $segmentPrices = [];
 
 	public $type;
 
@@ -106,6 +108,24 @@ class QuoteCalculator {
 		});
 	}
 
+	public function calculateRailingCost($railing, $deal) {
+		$reseller = IsReseller::check($deal);
+		$this->linealFeetPerRailing[$railing->id] = 0;
+		$subtotal = 0;
+		foreach ($railing->segment as $segment) {
+			$linealFeet = (float) $segment->width;
+			$this->linealFeetPerRailing[$railing->id] += $linealFeet;
+
+			$segmentPrice = $this->getSegmentPrice($segment, $railing->steel, $reseller);
+
+			$this->segmentPrices[$segment->id] = $linealFeet * $segmentPrice;
+
+			$subtotal += $this->segmentPrices[$segment->id];
+		}
+
+		return $subtotal;
+	}
+
 	/**
 	 * For each segment, look up pricing details
 	 * it's width, no less than 4 feet, multiplied by price
@@ -117,15 +137,7 @@ class QuoteCalculator {
 		$reseller = IsReseller::check($deal);
 
 		foreach ($deal->railings as $railing) {
-			$this->linealFeetPerRailing[$railing->id] = 0;
-			foreach ($railing->segment as $segment) {
-				$linealFeet = (float) $segment->width;
-				$this->linealFeetPerRailing[$railing->id] += $linealFeet;
-
-				$segmentPrice = $this->getSegmentPrice($segment, $railing->steel, $reseller);
-
-				$this->subtotal += $linealFeet * $segmentPrice;
-			}
+			$this->subtotal += $this->calculateRailingCost($railing, $deal);
 		}
 
 		$this->customItems = $deal->custom_items;
@@ -139,8 +151,8 @@ class QuoteCalculator {
 		$this->subtotal += $this->customItemSubtotal;
 
 		if ($this->includeDiscount && isset($deal->customer[0]) && is_numeric($deal->customer[0]->discount_percentage)) {
-			$percentageDiscount = $deal->customer[0]->discount_percentage / 100;
-			$this->discount = $this->subtotal * $percentageDiscount;
+			$this->percentageDiscount = $deal->customer[0]->discount_percentage / 100;
+			$this->discount = $this->subtotal * $this->percentageDiscount;
 		}
 
 		if (!empty($deal->special_discount)) {
@@ -155,7 +167,7 @@ class QuoteCalculator {
 		$this->total = $this->subtotal - $this->discount + $this->tools + $this->taxes + $this->shipping;
 	}
 
-	protected function getSegmentPrice($segment, $material, $isReseller) {
+	public function getSegmentPrice($segment, $material, $isReseller) {
 		$price = $this->prices->where('type', $segment->type)->where('height', $segment->height)->where('material', $material)->first();
 		if (!$price) {
 			$this->errors[] = [
