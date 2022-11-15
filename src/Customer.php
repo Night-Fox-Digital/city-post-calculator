@@ -9,7 +9,7 @@ class Customer extends Model
 {
     protected $table = 'customers';
 
-    protected $fillable = ['company_name', 'phone_number', 'email_address', 'address_line_1', 'address_line_2', 'city', 'state_province', 'zip_postal_code', 'country', 'tax_exemption', 'tax_id', 'discount_percentage', 'first_name', 'last_name', 'reseller', 'alternate_phone_number', 'custom_ordering', 'created_at', 'updated_at'];
+    protected $fillable = ['company_name', 'phone_number', 'email', 'address_line_1', 'address_line_2', 'city', 'state_province', 'zip_postal_code', 'country', 'tax_exemption', 'tax_id', 'discount_percentage', 'first_name', 'last_name', 'reseller', 'alternate_phone_number', 'custom_ordering', 'created_at', 'updated_at'];
 
     protected static function boot() {
         parent::boot();
@@ -37,5 +37,5 @@ class Customer extends Model
 
     public function deal() {
         return $this->belongsToMany('CityPost\Calculator\Deal', 'customer_deal', 'customer_id', 'deal_id');
-    }    
+    }
 }

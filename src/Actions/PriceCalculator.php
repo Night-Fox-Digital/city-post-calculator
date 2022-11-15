@@ -2,7 +2,6 @@
 
 namespace CityPost\Calculator\Actions;
 
-use CityPost\Calculator\Deal;
 use CityPost\Calculator\Price;
 
 class PriceCalculator {
@@ -16,7 +15,7 @@ class PriceCalculator {
 	/**
 	 * @var Deal
 	 */
-	public Deal $deal;
+	public $deal;
 	/**
 	 * @var Record<railingId, linealFeet>
 	 */
@@ -40,7 +39,7 @@ class PriceCalculator {
 
 	public $shipping = 0;
 
-	public function __construct(Deal $deal, bool $isWholesaler) {
+	public function __construct($deal, bool $isWholesaler) {
 		$this->deal = $deal;
 		$this->isWholesaler = $isWholesaler;
 		$this->prices = Price::get();

@@ -4,8 +4,6 @@ namespace CityPost\Calculator\Actions;
 
 use CityPost\Calculator\Exceptions\MissingPartException;
 use CityPost\Calculator\Part;
-use CityPost\Calculator\Railing;
-use CityPost\Calculator\Segment;
 
 class PostParts {
 
@@ -13,7 +11,7 @@ class PostParts {
 	 * @param Segment $segment
 	 * @return [ 'standard' => Part, 'finish' => Part ];
 	 */
-	public static function get(Railing $railing, Segment $segment, $purpose = 'Horizontal', $corner = 'Standard') {
+	public static function get($railing, $segment, $purpose = 'Horizontal', $corner = 'Standard') {
 		$mount = $segment->mount;
 		$height = $segment->height . '"';
 		$material = $railing->steel;

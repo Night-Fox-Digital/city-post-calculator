@@ -2,9 +2,6 @@
 
 namespace CityPost\Calculator\Actions;
 
-use CityPost\Calculator\Railing;
-use CityPost\Calculator\Segment;
-
 class PostCalculator {
 
 	/**
@@ -27,7 +24,7 @@ class PostCalculator {
 	 */
 	public $segmentPosts = [];
 
-	public function __construct(Railing $railing, Segment $segment) {
+	public function __construct($railing, $segment) {
 		$this->segment = $segment;
 		$this->railing = $railing;
 	}

@@ -4,8 +4,6 @@ namespace CityPost\Calculator\Actions;
 
 use CityPost\Calculator\Exceptions\MissingPartException;
 use CityPost\Calculator\Part;
-use CityPost\Calculator\Railing;
-use CityPost\Calculator\Segment;
 
 class SegmentInventory {
 
@@ -13,8 +11,8 @@ class SegmentInventory {
 	public $height;
 	public $color;
 
-	public Railing $railing;
-	public Segment $segment;
+	public $railing;
+	public $segment;
 
 	/**
 	 * @var Part[]
@@ -41,7 +39,7 @@ class SegmentInventory {
 	 * @param Railing $railing
 	 * @param Segment $segment
 	 */
-	public function __construct(Railing $railing, Segment $segment, $parts) {
+	public function __construct($railing, $segment, $parts) {
 		$this->railing = $railing;
 		$this->segment = $segment;
 		$this->parts = $parts;

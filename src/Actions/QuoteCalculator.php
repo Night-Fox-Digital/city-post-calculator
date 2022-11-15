@@ -2,7 +2,6 @@
 
 namespace CityPost\Calculator\Actions;
 
-use CityPost\Calculator\Deal;
 use CityPost\Calculator\Part;
 use CityPost\Calculator\Price;
 
@@ -58,7 +57,7 @@ class QuoteCalculator {
 	 * @param $type
 	 */
 
-	public function __construct(Deal $deal, $type = null, $prices = null) {
+	public function __construct($deal, $type = null, $prices = null) {
 		$this->prices = $prices ?: Price::get();
 
 		if (!$type) {
@@ -132,7 +131,7 @@ class QuoteCalculator {
 	 * multiply entire total by customer's discount if it exists
 	 */
 
-	protected function calculateCosts(Deal $deal) {
+	protected function calculateCosts($deal) {
 
 		$reseller = IsReseller::check($deal);
 

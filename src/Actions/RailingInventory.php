@@ -2,8 +2,6 @@
 
 namespace CityPost\Calculator\Actions;
 
-use CityPost\Calculator\Railing;
-
 class RailingInventory {
 
 	/**
@@ -32,7 +30,7 @@ class RailingInventory {
 	 * RailingInventory constructor.
 	 * @param Railing $railing
 	 */
-	public function __construct(Railing $railing, $parts) {
+	public function __construct($railing, $parts) {
 		$this->railing = $railing;
 		$this->calculate($parts);
 	}
