@@ -30,7 +30,7 @@ class CustomItemsInventory {
 		}
 
 		foreach ($this->customItems as $customItem) {
-			foreach ($customItem->parts as $part) {
+			foreach ($customItem->part as $part) {
 				$quantity = (int)$customItem->quantity;
 				if ($part->track_inventory === 'Yes' && $quantity > 0) {
 					// Track Inventory
