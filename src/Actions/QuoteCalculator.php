@@ -89,6 +89,11 @@ class QuoteCalculator {
 			$this->railingInventories[$railing->id] = $railingInventory;
 		}
 
+		$customItemInventory = new CustomItemsInventory($deal, $parts);
+		foreach ($customItemInventory->inventoryBySku as $sku => $count) {
+			$this->inventoryBySku[$sku] += $count;
+		}
+
 		$this->calculateCosts($deal);
 	}
 
