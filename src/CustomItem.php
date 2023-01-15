@@ -28,6 +28,6 @@ class CustomItem extends Model
     }
 
     public function part() {
-        return $this->belongsToMany('CityPost\Calculator\Part', 'custom_item_part', 'custom_item_id', 'part_id');
-    }    
+        return $this->belongsToMany('CityPost\Calculator\LegacyPart', 'custom_item_part', 'custom_item_id', 'part_id');
+    }
 }

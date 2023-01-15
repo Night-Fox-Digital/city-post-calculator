@@ -3,7 +3,7 @@
 namespace CityPost\Calculator\Actions;
 
 use CityPost\Calculator\Exceptions\MissingPartException;
-use CityPost\Calculator\Part;
+use CityPost\Calculator\LegacyPart;
 
 class SegmentInventory {
 
@@ -15,14 +15,14 @@ class SegmentInventory {
 	public $segment;
 
 	/**
-	 * @var Part[]
+	 * @var LegacyPart[]
 	 */
 	public $parts;
 
 	/**
 	 * @var array (Record<sku, quantity>) - The calculated inventory usage for the quote
 	 */
-	public $inventoryBySku = [];
+	public $inventoryByCalculatorId = [];
 
 	/**
 	 * @var Record<sku, numPosts>
@@ -35,7 +35,7 @@ class SegmentInventory {
 	public $errors = [];
 
 	/**
-	 * @param Part[] $parts
+	 * @param LegacyPart[] $parts
 	 * @param Railing $railing
 	 * @param Segment $segment
 	 */
@@ -49,13 +49,13 @@ class SegmentInventory {
 
 
 		foreach ($parts as $part) {
-			$this->inventoryBySku[$part->sku] = 0;
+			$this->inventoryByCalculatorId[$part->sku] = 0;
 		}
 		$this->execute();
 	}
 
 	public function getInventory() {
-		return collect($this->inventoryBySku)->filter(function($count) {
+		return collect($this->inventoryByCalculatorId)->filter(function($count) {
 			return $count > 0;
 		});
 	}
@@ -303,11 +303,11 @@ class SegmentInventory {
 	}
 
 	protected function addInventory($sku, $count) {
-		if (!isset($this->inventoryBySku[$sku])) {
-			$this->inventoryBySku[$sku] = 0;
+		if (!isset($this->inventoryByCalculatorId[$sku])) {
+			$this->inventoryByCalculatorId[$sku] = 0;
 		}
 
-		$this->inventoryBySku[$sku] += $count;
+		$this->inventoryByCalculatorId[$sku] += $count;
 	}
 
 	protected function mapColor($color) {

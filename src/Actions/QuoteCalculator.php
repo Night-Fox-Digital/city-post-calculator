@@ -2,7 +2,9 @@
 
 namespace CityPost\Calculator\Actions;
 
-use CityPost\Calculator\Part;
+use Carbon\Carbon;
+use CityPost\Calculator\Adapters\VersionedPartAdapter;
+use CityPost\Calculator\LegacyPart;
 use CityPost\Calculator\Price;
 
 class QuoteCalculator {
@@ -20,9 +22,9 @@ class QuoteCalculator {
 	public $prices = [];
 
 	/**
-	 * @var Record<sku, Part>
+	 * @var Record<sku, LegacyPart>
 	 */
-	public $partsBySku;
+	public $partsByCalculatorId;
 
 	public $subtotal = 0;
 	public $customItemSubtotal = 0;
@@ -50,7 +52,7 @@ class QuoteCalculator {
 	/**
 	 * @var array (Record<sku, quantity>) - The calculated inventory usage for the quote
 	 */
-	public $inventoryBySku = [];
+	public $inventoryByCalculatorId = [];
 
 	/**
 	 * @param Deal $deal
@@ -71,16 +73,16 @@ class QuoteCalculator {
 		$this->includeDiscount = $type !== 'retail';
 		$this->type = $type;
 
-		$parts = Part::get();
-		$this->partsBySku = $parts->keyBy('sku');
+		$parts = collect($this->getParts($deal))->sortBy('name');
+		$this->partsByCalculatorId = $parts->keyBy('sku');
 		foreach ($parts as $part) {
-			$this->inventoryBySku[$part->sku] = 0;
+			$this->inventoryByCalculatorId[$part->sku] = 0;
 		}
 
 		foreach ($deal->railings as $railing) {
 			$railingInventory = new RailingInventory($railing, $parts);
-			foreach ($railingInventory->inventoryBySku as $sku => $count) {
-				$this->inventoryBySku[$sku] += $count;
+			foreach ($railingInventory->inventoryByCalculatorId as $sku => $count) {
+				$this->inventoryByCalculatorId[$sku] += $count;
 			}
 			foreach ($railingInventory->errors as $error) {
 				$this->errors[] = $error;
@@ -90,8 +92,8 @@ class QuoteCalculator {
 		}
 
 		$customItemInventory = new CustomItemsInventory($deal, $parts);
-		foreach ($customItemInventory->inventoryBySku as $sku => $count) {
-			$this->inventoryBySku[$sku] += $count;
+		foreach ($customItemInventory->inventoryByCalculatorId as $sku => $count) {
+			$this->inventoryByCalculatorId[$sku] += $count;
 		}
 
 		$this->calculateCosts($deal);
@@ -107,7 +109,7 @@ class QuoteCalculator {
 	}
 
 	public function getInventory() {
-		return collect($this->inventoryBySku)->filter(function($count) {
+		return collect($this->inventoryByCalculatorId)->filter(function($count) {
 			return $count > 0;
 		});
 	}
@@ -200,5 +202,19 @@ class QuoteCalculator {
 		}
 
 		return $cost;
+	}
+
+	protected function getEffectiveDate($deal) {
+		$date = Carbon::now();
+		if (!empty($deal->execution_date)) {
+			$date = Carbon::parse($deal->execution_date);
+		}
+
+		return $date;
+	}
+
+	protected function getParts($deal) {
+		$partsAdapter = new VersionedPartAdapter();
+		return $partsAdapter->loadPartsByDate($this->getEffectiveDate($deal));
 	}
 }

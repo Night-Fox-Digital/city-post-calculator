@@ -28,6 +28,6 @@ class PreDealCustomItem extends Model
     }
 
     public function part() {
-        return $this->belongsToMany('CityPost\Calculator\Part', 'part_pre_deal_custom_item', 'pre_deal_custom_item_id', 'part_id');
-    }    
+        return $this->belongsToMany('CityPost\Calculator\LegacyPart', 'part_pre_deal_custom_item', 'pre_deal_custom_item_id', 'part_id');
+    }
 }

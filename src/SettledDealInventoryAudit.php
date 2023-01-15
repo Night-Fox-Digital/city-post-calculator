@@ -18,6 +18,6 @@ class SettledDealInventoryAudit extends Model
 	}
 
 	public function part() {
-		return $this->belongsTo(Part::class);
+		return $this->belongsTo(LegacyPart::class);
 	}
 }

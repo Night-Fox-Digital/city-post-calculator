@@ -3,7 +3,7 @@
 namespace CityPost\Calculator\Actions;
 
 use CityPost\Calculator\Exceptions\MissingPartException;
-use CityPost\Calculator\Part;
+use CityPost\Calculator\LegacyPart;
 
 class PostParts {
 
@@ -21,7 +21,7 @@ class PostParts {
 			$color = 'Black';
 		}
 
-		$part = Part::where('mount', $mount)
+		$part = LegacyPart::where('mount', $mount)
 			->where('purpose', $purpose)
 			->where('height', $height)
 			->where('material', $material)

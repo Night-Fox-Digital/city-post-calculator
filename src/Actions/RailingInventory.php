@@ -19,7 +19,7 @@ class RailingInventory {
 	/**
 	 * @var array (Record<sku, quantity>) - The calculated inventory usage for the quote
 	 */
-	public $inventoryBySku = [];
+	public $inventoryByCalculatorId = [];
 
 	/**
 	 * @var array - Array of errors that occurred that would prevent an accurate quote
@@ -37,7 +37,7 @@ class RailingInventory {
 
 	protected function calculate($parts) {
 		foreach ($parts as $part) {
-			$this->inventoryBySku[$part->sku] = 0;
+			$this->inventoryByCalculatorId[$part->sku] = 0;
 		}
 
 		foreach ($this->railing->segment as $segment) {
@@ -45,7 +45,7 @@ class RailingInventory {
 			$this->totalPosts += $segmentInventory->totalPosts();
 			$inventory = $segmentInventory->getInventory();
 			foreach ($inventory as $sku => $count) {
-				$this->inventoryBySku[$sku] += $count;
+				$this->inventoryByCalculatorId[$sku] += $count;
 			}
 
 			$this->errors = array_merge($this->errors, $segmentInventory->errors);
@@ -53,12 +53,12 @@ class RailingInventory {
 			$this->inventoryBySegment[$segment->id] = $segmentInventory;
 		}
 
-		$this->inventoryBySku['CBL-18'] = ceil($this->inventoryBySku['CBL-18']);
+		$this->inventoryByCalculatorId['CBL-18'] = ceil($this->inventoryByCalculatorId['CBL-18']);
 
 	}
 
 	public function getInventory() {
-		return collect($this->inventoryBySku)->filter(function($count) {
+		return collect($this->inventoryByCalculatorId)->filter(function($count) {
 			return $count > 0;
 		});
 	}

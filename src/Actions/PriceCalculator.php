@@ -91,7 +91,22 @@ class PriceCalculator {
 	}
 
 	protected function getSegmentPrice($segment, $material) {
-		$price = $this->prices->where('type', $segment->type)->where('height', $segment->height)->where('material', $material)->first();
+		$price = $this->prices
+			->where('type', $segment->type)
+			->where('height', $segment->height)
+			->where('material', $material);
+
+		if ($this->deal->execution_date) {
+			$price->whereDate('effective_date', '<=', $this->deal->execution_date)
+				->where(function($query) {
+					$query->whereDate('end_date', '>', $this->deal->execution_date)
+						->orWhereNull('end_date');
+				});
+		} else {
+			$price->whereNull('end_date');
+		}
+
+		$price = $price->first();
 		if (!$price) {
 			$this->errors[] = [
 				'Could not find pricing information for the following segment. Please contact support@nightfox.digital',

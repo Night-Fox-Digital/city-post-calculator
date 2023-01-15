@@ -24,6 +24,6 @@ class Ledger extends Model
     }
 
     public function part() {
-        return $this->belongsToMany('CityPost\Calculator\Part', 'ledger_part', 'ledger_id', 'part_id');
-    }    
+        return $this->belongsToMany('CityPost\Calculator\LegacyPart', 'ledger_part', 'ledger_id', 'part_id');
+    }
 }
