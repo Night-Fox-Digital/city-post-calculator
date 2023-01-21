@@ -20,10 +20,14 @@ class PartVersion extends \App\FoxModel
     }
 
     public function tags() {
-        return $this->morphToMany('App\Tag', 'taggable');
+        return $this->morphToMany('CityPost\Calculator\Tag', 'taggable');
     }
 
     public function part() {
-        return $this->belongsTo('App\Part');
-    }    
+        return $this->belongsTo('CityPost\Calculator\Part');
+    }
+
+	public function ledger() {
+		return $this->belongsToMany('CityPost\Calculator\Ledger', 'ledger_part_version', 'part_version_id', 'ledger_id');
+	}
 }

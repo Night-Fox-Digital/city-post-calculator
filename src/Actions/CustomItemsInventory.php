@@ -30,11 +30,11 @@ class CustomItemsInventory {
 		}
 
 		foreach ($this->customItems as $customItem) {
-			foreach ($customItem->part as $part) {
+			foreach ($customItem->part_version as $partVersion) {
 				$quantity = (int)$customItem->quantity;
-				if ($part->track_inventory === 'Yes' && $quantity > 0) {
+				if ($partVersion->part->track_inventory === 'Yes' && $quantity > 0) {
 					// Track Inventory
-					$this->inventoryByCalculatorId[$part->sku] += $quantity;
+					$this->inventoryByCalculatorId[$partVersion->part->sku] += $quantity;
 				}
 			}
 		}

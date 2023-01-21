@@ -20,22 +20,22 @@ class Part extends \App\FoxModel
     }
 
     public function tags() {
-        return $this->morphToMany('App\Tag', 'taggable');
+        return $this->morphToMany('CityPost\Calculator\Tag', 'taggable');
     }
 
     public function part_type() {
-        return $this->belongsToMany('App\PartType', 'part_part_type', 'part_id', 'part_type_id');
+        return $this->belongsToMany('CityPost\Calculator\PartType', 'part_part_type', 'part_id', 'part_type_id');
     }
 
     public function ledger() {
-        return $this->belongsToMany('App\Ledger', 'ledger_part', 'part_id', 'ledger_id');
+        return $this->belongsToMany('CityPost\Calculator\Ledger', 'ledger_part', 'part_id', 'ledger_id');
     }
 
     public function custom_items() {
-        return $this->belongsToMany('App\CustomItem', 'custom_item_part', 'part_id', 'custom_item_id');
+        return $this->belongsToMany('CityPost\Calculator\CustomItem', 'custom_item_part', 'part_id', 'custom_item_id');
     }
 
     public function part_versions() {
-        return $this->hasMany('App\PartVersion');
+        return $this->hasMany('CityPost\Calculator\PartVersion');
     }
 }

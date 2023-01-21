@@ -21,6 +21,8 @@ class QuoteCalculator {
 	 */
 	public $prices = [];
 
+	public $parts = [];
+
 	/**
 	 * @var Record<sku, LegacyPart>
 	 */
@@ -73,14 +75,14 @@ class QuoteCalculator {
 		$this->includeDiscount = $type !== 'retail';
 		$this->type = $type;
 
-		$parts = collect($this->getParts($deal))->sortBy('name');
-		$this->partsByCalculatorId = $parts->keyBy('sku');
-		foreach ($parts as $part) {
+		$this->parts = collect($this->getParts($deal))->sortBy('name');
+		$this->partsByCalculatorId = $this->parts->keyBy('sku');
+		foreach ($this->parts as $part) {
 			$this->inventoryByCalculatorId[$part->sku] = 0;
 		}
 
 		foreach ($deal->railings as $railing) {
-			$railingInventory = new RailingInventory($railing, $parts);
+			$railingInventory = new RailingInventory($railing, $this->parts);
 			foreach ($railingInventory->inventoryByCalculatorId as $sku => $count) {
 				$this->inventoryByCalculatorId[$sku] += $count;
 			}
@@ -91,7 +93,7 @@ class QuoteCalculator {
 			$this->railingInventories[$railing->id] = $railingInventory;
 		}
 
-		$customItemInventory = new CustomItemsInventory($deal, $parts);
+		$customItemInventory = new CustomItemsInventory($deal, $this->parts);
 		foreach ($customItemInventory->inventoryByCalculatorId as $sku => $count) {
 			$this->inventoryByCalculatorId[$sku] += $count;
 		}

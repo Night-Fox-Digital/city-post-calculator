@@ -30,4 +30,8 @@ class CustomItem extends Model
     public function part() {
         return $this->belongsToMany('CityPost\Calculator\LegacyPart', 'custom_item_part', 'custom_item_id', 'part_id');
     }
+
+	public function part_version() {
+		return $this->belongsToMany('CityPost\Calculator\PartVersion', 'custom_item_part_version', 'custom_item_id', 'part_version_id');
+	}
 }

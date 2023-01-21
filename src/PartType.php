@@ -20,10 +20,10 @@ class PartType extends \App\FoxModel
     }
 
     public function tags() {
-        return $this->morphToMany('App\Tag', 'taggable');
+        return $this->morphToMany('CityPost\Calculator\Tag', 'taggable');
     }
 
     public function part() {
-        return $this->belongsToMany('App\Part', 'part_part_type', 'part_type_id', 'part_id');
+        return $this->belongsToMany('CityPost\Calculator\Part', 'part_part_type', 'part_type_id', 'part_id');
     }    
 }

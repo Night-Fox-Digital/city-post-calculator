@@ -49,6 +49,7 @@ class VersionedPartAdapter implements PartAdapter {
 			if ($part && count($part->part_versions) > 0) {
 				$partVersion = $part->part_versions[0];
 				$part->sku_id = $partVersion->sku_id;
+				$part->part_version_id = $partVersion->id;
 				return $part;
 			}
 		}
@@ -67,6 +68,7 @@ class VersionedPartAdapter implements PartAdapter {
 	protected function convertPartVersionToPart($partVersion) {
 		$part = $partVersion->part;
 		$part->sku_id = $partVersion->sku_id;
+		$part->part_version_id = $partVersion->id;
 		return $part;
 	}
 
