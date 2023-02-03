@@ -124,7 +124,7 @@ class QuoteCalculator {
 			$linealFeet = (float) $segment->width;
 			$this->linealFeetPerRailing[$railing->id] += $linealFeet;
 
-			$segmentPrice = $this->getSegmentPrice($segment, $railing->steel, $reseller);
+			$segmentPrice = $this->getSegmentPrice($deal, $segment, $railing->steel, $reseller);
 
 			$this->segmentPrices[$segment->id] = $linealFeet * $segmentPrice;
 
@@ -175,8 +175,23 @@ class QuoteCalculator {
 		$this->total = $this->subtotal - $this->discount + $this->tools + $this->taxes + $this->shipping;
 	}
 
-	public function getSegmentPrice($segment, $material, $isReseller) {
-		$price = $this->prices->where('type', $segment->type)->where('height', $segment->height)->where('material', $material)->first();
+	public function getSegmentPrice($deal, $segment, $material, $isReseller) {
+		$price = Price::where('type', $segment->type)
+			->where('height', $segment->height)
+			->where('material', $material);
+
+		if ($deal->execution_date) {
+			$price->whereDate('effective_date', '<=', $deal->execution_date)
+				->where(function($query) use ($deal) {
+					$query->whereDate('end_date', '>', $deal->execution_date)
+						->orWhereNull('end_date');
+				});
+		} else {
+			$price->whereNull('end_date');
+		}
+
+
+		$price = $price->first();
 		if (!$price) {
 			$this->errors[] = [
 				'Could not find pricing information for the following segment. Please contact support@nightfox.digital',
