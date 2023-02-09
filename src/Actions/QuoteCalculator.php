@@ -113,6 +113,8 @@ class QuoteCalculator {
 	public function getInventory() {
 		return collect($this->inventoryByCalculatorId)->filter(function($count) {
 			return $count > 0;
+		})->sortBy(function($count, $calculatorId) {
+			return $this->partsByCalculatorId[$calculatorId]->custom_ordering;
 		});
 	}
 
