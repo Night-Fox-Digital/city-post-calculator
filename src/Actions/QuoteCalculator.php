@@ -27,6 +27,10 @@ class QuoteCalculator {
 	 * @var Record<sku, LegacyPart>
 	 */
 	public $partsByCalculatorId;
+	/**
+	 * @var Record<partVerionId, LegacyPart>
+	 */
+	public $partsByPartVersionId;
 
 	public $subtotal = 0;
 	public $customItemSubtotal = 0;
@@ -57,6 +61,11 @@ class QuoteCalculator {
 	public $inventoryByCalculatorId = [];
 
 	/**
+	 * @var array (Record<sku, quantity>) - The calculated inventory usage for the quote
+	 */
+	public $customItemsByPartVersionId = [];
+
+	/**
 	 * @param Deal $deal
 	 * @param $type
 	 */
@@ -77,8 +86,10 @@ class QuoteCalculator {
 
 		$this->parts = collect($this->getParts($deal))->sortBy('name');
 		$this->partsByCalculatorId = $this->parts->keyBy('sku');
+		$this->partsByPartVersionId = $this->parts->keyBy('part_version_id');
 		foreach ($this->parts as $part) {
 			$this->inventoryByCalculatorId[$part->sku] = 0;
+			$this->customItemsByPartVersionId[$part->part_version_id] = 0;
 		}
 
 		foreach ($deal->railings as $railing) {
@@ -93,9 +104,9 @@ class QuoteCalculator {
 			$this->railingInventories[$railing->id] = $railingInventory;
 		}
 
-		$customItemInventory = new CustomItemsInventory($deal, $this->parts);
-		foreach ($customItemInventory->inventoryByCalculatorId as $sku => $count) {
-			$this->inventoryByCalculatorId[$sku] += $count;
+		$customItemInventory = new CustomItemsInventory($deal, $this->partsByPartVersionId);
+		foreach ($customItemInventory->getInventory() as $partVersionId => $count) {
+			$this->customItemsByPartVersionId[$partVersionId] += $count;
 		}
 
 		$this->calculateCosts($deal);
@@ -115,6 +126,14 @@ class QuoteCalculator {
 			return $count > 0;
 		})->sortBy(function($count, $calculatorId) {
 			return $this->partsByCalculatorId[$calculatorId]->custom_ordering;
+		});
+	}
+
+	public function getCustomItemsInventory() {
+		return collect($this->customItemsByPartVersionId)->filter(function($count) {
+			return $count > 0;
+		})->sortBy(function($count, $partVersionId) {
+			return $this->partsByPartVersionId[$partVersionId]->custom_ordering;
 		});
 	}
 

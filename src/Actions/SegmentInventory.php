@@ -197,7 +197,7 @@ class SegmentInventory {
 	}
 
 	protected function calculateEndCaps() {
-		if ($this->segment->end_sleeve_type === 'Horizontal to Stair') return;
+		if ($this->segment->end_sleeve_type === 'Horizontal to Stair' || $this->segment->end_sleeve_type === 'None' || $this->segment->top_rail === 'No Toprail') return;
 
 		$size = $this->is3InchToprail() ? 13 : 12;
 

@@ -13,7 +13,7 @@ class CustomItemsInventory {
 	/**
 	 * @var array (Record<sku, quantity>) - The calculated inventory usage for the quote
 	 */
-	public $inventoryByCalculatorId = [];
+	public $itemsByPartVersionId = [];
 
 	/**
 	 * CustomItemInventory constructor.
@@ -25,8 +25,8 @@ class CustomItemsInventory {
 	}
 
 	protected function calculate($parts) {
-		foreach ($parts as $part) {
-			$this->inventoryByCalculatorId[$part->sku] = 0;
+		foreach ($parts as $partVersionId => $part) {
+			$this->itemsByPartVersionId[$partVersionId] = 0;
 		}
 
 		foreach ($this->customItems as $customItem) {
@@ -34,14 +34,15 @@ class CustomItemsInventory {
 				$quantity = (int)$customItem->quantity;
 				if ($partVersion->part->track_inventory === 'Yes' && $quantity > 0) {
 					// Track Inventory
-					$this->inventoryByCalculatorId[$partVersion->part->sku] += $quantity;
+					$this->itemsByPartVersionId[$partVersion->id] += $quantity;
 				}
 			}
 		}
+
 	}
 
 	public function getInventory() {
-		return collect($this->inventoryByCalculatorId)->filter(function($count) {
+		return collect($this->itemsByPartVersionId)->filter(function($count) {
 			return $count > 0;
 		});
 	}
