@@ -45,7 +45,17 @@ class RailingInventory {
 			$this->totalPosts += $segmentInventory->totalPosts();
 			$inventory = $segmentInventory->getInventory();
 			foreach ($inventory as $sku => $count) {
-				$this->inventoryByCalculatorId[$sku] += $count;
+				if (empty($sku)) {
+					$this->errors[] = [
+						'Missing SKU in railing',
+						$segment,
+					];
+				} else {
+					if (!isset($this->inventoryByCalculatorId[$sku])) {
+						$this->inventoryByCalculatorId[$sku] = 0;
+					}
+					$this->inventoryByCalculatorId[$sku] += $count;
+				}
 			}
 
 			$this->errors = array_merge($this->errors, $segmentInventory->errors);

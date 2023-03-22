@@ -34,6 +34,9 @@ class CustomItemsInventory {
 				$quantity = (int)$customItem->quantity;
 				if ($partVersion->part->track_inventory === 'Yes' && $quantity > 0) {
 					// Track Inventory
+					if (!isset($this->itemsByPartVersionId[$partVersion->id])) {
+						$this->itemsByPartVersionId[$partVersion->id] = 0;
+					}
 					$this->itemsByPartVersionId[$partVersion->id] += $quantity;
 				}
 			}
