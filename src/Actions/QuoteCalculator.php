@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use CityPost\Calculator\Adapters\VersionedPartAdapter;
 use CityPost\Calculator\LegacyPart;
 use CityPost\Calculator\Price;
+use Illuminate\Support\Facades\Cache;
 
 class QuoteCalculator {
 
@@ -95,7 +96,7 @@ class QuoteCalculator {
 		foreach ($deal->railings as $railing) {
 			$railingInventory = new RailingInventory($railing, $this->parts);
 			foreach ($railingInventory->inventoryByCalculatorId as $sku => $count) {
-				$this->inventoryByCalculatorId[$sku] += $count;
+				$this->addInventory($sku, $count);
 			}
 			foreach ($railingInventory->errors as $error) {
 				$this->errors[] = $error;
@@ -106,6 +107,9 @@ class QuoteCalculator {
 
 		$customItemInventory = new CustomItemsInventory($deal, $this->partsByPartVersionId);
 		foreach ($customItemInventory->getInventory() as $partVersionId => $count) {
+			if (!isset($this->customItemsByPartVersionId[$partVersionId])) {
+				$this->customItemsByPartVersionId[$partVersionId] = 0;
+			}
 			$this->customItemsByPartVersionId[$partVersionId] += $count;
 		}
 
@@ -254,5 +258,18 @@ class QuoteCalculator {
 	protected function getParts($deal) {
 		$partsAdapter = new VersionedPartAdapter();
 		return $partsAdapter->loadPartsByDate($this->getEffectiveDate($deal));
+
+//		return Cache::remember('parts-' . $date->toString(), 60, function() use ($date) {
+//			$partsAdapter = new VersionedPartAdapter();
+//			return $partsAdapter->loadPartsByDate($date);
+//		});
+	}
+
+	protected function addInventory($sku, $count) {
+		if (!isset($this->inventoryByCalculatorId[$sku])) {
+			$this->inventoryByCalculatorId[$sku] = 0;
+		}
+
+		$this->inventoryByCalculatorId[$sku] += $count;
 	}
 }
