@@ -2,13 +2,10 @@
 
 namespace CityPost\Calculator;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SettledDealInventoryAudit extends Model
 {
-    use HasFactory;
-
     protected $table = 'settled_deals_inventory_audit';
 
     protected $guarded = ['id'];
