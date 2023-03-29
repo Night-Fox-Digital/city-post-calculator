@@ -129,7 +129,9 @@ class QuoteCalculator {
 		return collect($this->inventoryByCalculatorId)->filter(function($count) {
 			return $count > 0;
 		})->sortBy(function($count, $calculatorId) {
-			return $this->partsByCalculatorId[$calculatorId]->custom_ordering;
+			return isset($this->partsByCalculatorId[$calculatorId])
+				? ($this->partsByCalculatorId[$calculatorId]->custom_ordering)
+				: 0;
 		});
 	}
 
@@ -137,7 +139,9 @@ class QuoteCalculator {
 		return collect($this->customItemsByPartVersionId)->filter(function($count) {
 			return $count > 0;
 		})->sortBy(function($count, $partVersionId) {
-			return $this->partsByPartVersionId[$partVersionId]->custom_ordering;
+			return isset($this->partsByPartVersionId[$partVersionId])
+				? ($this->partsByPartVersionId[$partVersionId]->custom_ordering)
+				: 0;
 		});
 	}
 
