@@ -126,12 +126,10 @@ class QuoteCalculator {
 	}
 
 	public function getInventory() {
-		return collect($this->inventoryByCalculatorId)->filter(function($count) {
-			return $count > 0;
+		return collect($this->inventoryByCalculatorId)->filter(function($count, $calculatorId) {
+			return $count > 0 && isset($this->partsByCalculatorId[$calculatorId]);
 		})->sortBy(function($count, $calculatorId) {
-			return isset($this->partsByCalculatorId[$calculatorId])
-				? ($this->partsByCalculatorId[$calculatorId]->custom_ordering)
-				: 0;
+			return ($this->partsByCalculatorId[$calculatorId]->custom_ordering);
 		});
 	}
 
