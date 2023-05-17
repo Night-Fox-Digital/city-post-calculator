@@ -203,19 +203,16 @@ class QuoteCalculator {
 	}
 
 	public function getSegmentPrice($deal, $segment, $material, $isReseller) {
+		$date = $this->getEffectiveDate($deal);
 		$price = Price::where('type', $segment->type)
 			->where('height', $segment->height)
 			->where('material', $material);
 
-		if ($deal->execution_date) {
-			$price->whereDate('effective_date', '<=', $deal->execution_date)
-				->where(function($query) use ($deal) {
-					$query->whereDate('end_date', '>', $deal->execution_date)
-						->orWhereNull('end_date');
-				});
-		} else {
-			$price->whereNull('end_date');
-		}
+		$price->whereDate('effective_date', '<=', $date)
+			->where(function($query) use ($date) {
+				$query->whereDate('end_date', '>', $date)
+					->orWhereNull('end_date');
+			});
 
 
 		$price = $price->first();
@@ -249,12 +246,14 @@ class QuoteCalculator {
 	}
 
 	protected function getEffectiveDate($deal) {
-		$date = Carbon::now();
 		if (!empty($deal->execution_date)) {
 			$date = Carbon::parse($deal->execution_date);
+			if ($date->isValid()) {
+				return $date;
+			}
 		}
 
-		return $date;
+		return Carbon::now();
 	}
 
 	protected function getParts($deal) {
