@@ -210,7 +210,7 @@ class QuoteCalculator {
 
 		$price->whereDate('effective_date', '<=', $date)
 			->where(function($query) use ($date) {
-				$query->whereDate('end_date', '>', $date)
+				$query->whereDate('end_date', '>=', $date)
 					->orWhereNull('end_date');
 			});
 
